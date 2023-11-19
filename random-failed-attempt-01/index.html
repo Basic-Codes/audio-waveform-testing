@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FM</title>
+</head>
+<body>
+    <h1>Audio</h1>
+    <button onclick="play()">Play</button>
+
+    <script>
+        // let audio = new Audio('https://stream-155.zeno.fm/umq9q5uuva5tv?zs=ygYTV6rDSHytPOL2EM9xmw');
+        let audio = new Audio('./audio.mp3');
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let audioSource = null;
+            let analyser = null;
+        
+        const play = () => {
+            audio.paused ? audio.play() : audio.pause();
+        }
+
+        const getAnalyzerArray = () => {
+            if(audio) {
+                if(!audioSource) {
+                    audioSource = audioCtx.createMediaElementSource(audio);
+                }
+                analyser = audioCtx.createAnalyser();
+                audioSource.connect(analyser);
+                analyser.connect(audioCtx.destination);
+
+                const bufferLength = analyser.frequencyBinCount
+
+                let dataArray = new Uint8Array(bufferLength)
+
+                return dataArray
+            }
+            return null
+       }
+
+       setInterval(() => {
+            if(audio && !audio.paused) {
+                console.log(getAnalyzerArray())
+            }
+       }, 1000);
+    </script>
+</body>
+</html>
